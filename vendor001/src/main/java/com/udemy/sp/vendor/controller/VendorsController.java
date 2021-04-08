@@ -2,6 +2,8 @@ package com.udemy.sp.vendor.controller;
 
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -9,14 +11,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.udemy.sp.vendor.entities.Vendors;
+import com.udemy.sp.vendor.repos.VendorRepo;
 import com.udemy.sp.vendor.service.VendorService;
+import com.udemy.sp.vendor.utility.EmailUtil;
+
 
 @Controller
 public class VendorsController {
 	
+	
+	
+
+	@Autowired
+	private EmailUtil emailUtil;
 	@Autowired
 	private VendorService service;
-	
+	@Autowired
+	ServletContext sc;
 	
 	@RequestMapping("/showVendors")
 	public String createVendor() {
@@ -31,6 +42,7 @@ public class VendorsController {
 		Vendors vendorsSaved = service.saveVendors(vendors);
 		String msg = "Vendor saved with id: " + vendorsSaved.getId();
 		modelMap.addAttribute("msg",msg);
+		emailUtil.sendEmail("johnqatwork21@gmail.com", "Vendor Saved", "Vendor with id of "+ vendorsSaved.getId()+" has been saved");
 		return "createVendor";
 	}
 	
@@ -61,6 +73,7 @@ public class VendorsController {
 		modelMap.addAttribute("msg"	, msg);
 		List<Vendors> allVendors = service.getAllVendors();
 		modelMap.addAttribute("vendors",allVendors);
+		emailUtil.sendEmail("johnqatwork21@gmail.com", "Vendor Deleted", "Vendor with id of "+ vendorid.getId()+" has been deleted");
 		return "displayVendors";
 		
 	}
@@ -82,5 +95,6 @@ public class VendorsController {
 		modelMap.addAttribute("msg",msg);
 		return"displayVendors";
 	}
+	
 
 }
